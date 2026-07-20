@@ -1,8 +1,8 @@
+---
 title: "Code Assistant Skills for Accelerated llm-d Development, Evaluation and Configuration"
 description: "We created a suite of code assistant skills that integrate llm-d configuration and evaluation into AI-assisted development workflows. These skills are dedicated to configuring, deploying and benchmarking llm-d. They build on the existing llm-d benchmarking tools, and encapsulate llm-d-specific expertise and best practices, enabling more efficient, reliable, and reproducible benchmarking as codebases evolve. Beyond automating repetitive tasks, they help developers troubleshoot benchmarking issues, adapt workflows to ongoing code changes, and navigate the complexity of configuring, deploying and evaluating rapidly evolving systems."
 slug: skills-for-accelerated-llm-d-development-evaluation-and-configuration
 date: 2026-07-08T09:00
-
 
 authors:
 
@@ -15,7 +15,7 @@ authors:
 
 
 tags: [blog, inference, evaluation, benchmarking, configuration, skills, code assistants]
-
+---
 
 # The configuration and evaluation challenges of inference serving systems
 
