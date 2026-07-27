@@ -68,8 +68,7 @@ TBD: add other evidence for the value of skills
 
 # The Role of the Human-In-The-Loop
 
-TBD: e.g., detect common code assistant errors/pitfalls and capture in skills, review results and refine benchmarking/configuration tasks accordingly. Many of the skills were created following benchmarking activities and gaps detected in existing skills (reset of kv cache, create an llm-d-ready GKE cluster).
-
+While the skills automate much of the deployment and benchmarking workflow, the human remains an essential part of the evaluation loop. Meaningful performance evaluation requires more than simply collecting metrics - it requires interpreting the results to determine whether an experiment actually exercised the feature under investigation and whether the observed behavior supports valid conclusions. When experiments fail to provide meaningful insights, practitioners refine the deployment configuration, workload characteristics, or evaluation methodology and repeat the process. This iterative feedback loop also drives the evolution of the skills themselves. Common pitfalls encountered during benchmarking, recurring code assistant mistakes, and repetitive manual tasks are continuously distilled into new or improved skills. For example, capabilities such as provisioning an llm-d-ready GKE cluster and clearing KV cache state between benchmark runs were introduced after they were repeatedly identified as missing pieces during real benchmarking campaigns. As a result, the skills become progressively more capable over time, capturing operational knowledge and allowing future evaluations to benefit from the experience accumulated in previous ones.
 
 # Observations, Limitations and Lessons Learned
 
