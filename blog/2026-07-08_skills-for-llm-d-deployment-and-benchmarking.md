@@ -11,6 +11,7 @@ authors:
   - dolevadas
   - ashokchandrasekar
   - oshritfeder
+  - yangli
   - sharonkeidarbarner
 
 
@@ -19,28 +20,55 @@ tags: [blog, inference, evaluation, benchmarking, configuration, skills, code as
 
 # The configuration and evaluation challenges of inference serving systems
 
-Inference serving stacks such as llm-d are responsible for a wide range of sophisticated tasks, including request scheduling and batching, KV cache and memory management, multi-GPU execution, prefill/decode optimization, fault tolerance, autoscaling, and many others. Together, these responsibilities expose a vast configuration space that governs the behavior and performance of the serving system. At the same time, inference stacks are deployed under highly diverse operating conditions, varying in the models being served, the available hardware resources, and the characteristics of incoming workloads. This combination of extensive configurability and heterogeneous deployment environments creates a significant evaluation challenge: developers must reason about the interactions between numerous configuration parameters while ensuring that experimental results remain meaningful and comparable. 
+Inference serving stacks such as llm-d are responsible for a wide range of sophisticated tasks, including request scheduling and batching, KV cache and memory management, multi-GPU execution, prefill/decode optimization, fault tolerance, autoscaling, and many others. Together, these responsibilities expose a vast configuration space that governs the behavior and performance of the serving system. At the same time, inference stacks are deployed under highly diverse operating conditions, varying in the models being served, the available hardware resources, and the characteristics of incoming workloads. As a result, practitioners must navigate a complex configuration process, where identifying effective parameter settings for a particular deployment often requires substantial expertise and iterative experimentation. This combination of extensive configurability and heterogeneous deployment environments creates a significant evaluation challenge: developers must reason about the interactions between numerous configuration parameters while ensuring that experimental results remain meaningful and comparable. 
 
 The challenge extends well beyond configuration alone. Modern inference serving stacks evolve rapidly, with frequent code changes driven by active development and increasingly accelerated by AI-assisted programming workflows. As the software evolves, configuration options become deprecated, new features are introduced, interfaces and deployment mechanisms change, and entire implementation technologies may be replaced. Under these conditions, designing reliable and reproducible performance evaluations becomes exceptionally difficult. Evaluating a continuously evolving serving stack is akin to trying to hit a moving target: the system under study is constantly changing, requiring evaluation methodologies that are both robust to software evolution and adaptable to emerging capabilities.
 
 
 # llm-d skills for reliable and accelerated configuration and evaluation
 
-To address these challenges, we leverage code assistant skills as the foundation for automating llm-d configuration and evaluation. AI code assistants are particularly well suited for this task because they can efficiently navigate the large configuration space of modern inference serving stacks while automating repetitive deployment and benchmarking workflows. Rather than relying on rigid automation scripts, we adopt skills as the primary abstraction, as they strike an effective balance between repeatability and adaptability.
+To address these challenges, we leverage code assistant skills as the foundation for automating llm-d configuration and evaluation. AI code assistants are particularly well suited for this task because they can efficiently navigate the large configuration space of modern inference serving stacks, abstracting away low-level implementation details and allowing users to focus on selecting the appropriate llm-d configuration, workload configuration, and key performance metrics, while automating repetitive deployment and benchmarking workflows. Rather than relying on rigid automation scripts, we adopt skills as the primary abstraction, as they strike an effective balance between repeatability and adaptability.
 
 On one hand, skills encode domain knowledge and established best practices for configuring, deploying, and benchmarking llm-d using its existing tooling. By making this expertise explicitly available to the code assistant, skills guide its decision-making throughout the configuration and evaluation process, improving both the reliability and consistency of the generated workflows. On the other hand, skills remain intentionally lightweight: instead of reimplementing functionality, they orchestrate and build upon the project's existing codebase, tooling, and documentation. This design is particularly valuable in a rapidly evolving software ecosystem, where interfaces, deployment mechanisms, and implementation details change frequently. By remaining closely coupled to the current state of the project while avoiding unnecessary duplication, skills naturally adapt to ongoing software evolution, providing the flexibility required to support robust and reproducible evaluation over time.
 
-TBD: list available skills with 1-2 sentences on each
+To reduce the complexity of deploying and evaluating inference serving systems, we provide a collection of reusable skills that automate common operational tasks. These skills can be broadly divided into those intended for users deploying and evaluating llm-d, and those intended for developers extending or optimizing the serving stack.
+
+User-supporting skills include:
+
+    - deploy-llm-d: Deploys an llm-d stack on an existing Kubernetes or OpenShift cluster using the Well-Lit Path guides and deployment variants.
+    - teardown-llm-d: Removes an llm-d deployment and cleans up the associated Helm/Kustomize resources.
+    - create-gke-infra-llm-d: Provisions a Google Kubernetes Engine cluster with the GPU networking, node pools, and Gateway API prerequisites required for llm-d.
+    - configure-wva-autoscaling-llm-d: Configures the Workload Variant Autoscaler (WVA) and generates reusable deployment scripts.
+    - llm-d-autoconfig: Collects workload requirements and SLA constraints to generate deployment recommendations and, optionally, deploy and benchmark the recommended configuration.
+
+Developer-supporting skills include:
+
+    - run-llm-d-benchmark: Executes benchmark workloads against a deployed llm-d stack to collect performance metrics.
+    - compare-llm-d-configurations: Automates A/B evaluation by deploying, benchmarking, tearing down, and comparing multiple llm-d configurations.
+    - clear-kv-cache-tiers-in-llm-d-deployment: Clears KV cache state across GPU, CPU, and filesystem offload tiers without disrupting API availability, enabling repeatable experiments.
+    - kv-offload-load-designer (work in progress): Generates benchmark workload configurations that exercise specific request concurrency, stage, and count characteristics to trigger GPU KV cache offloading.
 
 
-# How llm-d skills help achieve accelerated evaluation 
+The complete collection of available skills is maintained in the llm-d Skills repository: https://github.com/llm-d-incubation/llm-d-skills.    
 
-TBD: provide specific examples and use cases where skills were of value (e.g., move from helm to kustomization, benchmark cli change). Provide numbers onscale and quality of configuration and benchmarking achieved using respective skills.
+
+# How llm-d skills help achieve accelerated configuration and evaluation 
+
+Over the course of three months, from May through July 2026, llm-d Skills powered a large-scale benchmarking campaign with minimal human intervention. During this period, we executed approximately 170 two-way and three-way comparison experiments, comprising more than 350 individual benchmark runs across different models, hardware, and software stack configurations.
+
+The evaluation covered a broad spectrum of llm-d capabilities, including routing scorer heuristics, precise prefix cache-aware routing, multi-tier KV cache offloading with different eviction policies, prefill/decode disaggregation using both vLLM and SGLang, and autoscaling. The experiments also exercised a wide variety of workloads, ranging from synthetic benchmarks to traces from the inference-perf workload catalog, as well as agentic trace replay.
+
+Beyond automating benchmark execution and enabling efficient exploration of the large configuration space, the skill-empowered code assistants proved remarkably resilient to the rapid evolution of the llm-d ecosystem that occurred during the benchmarking period. They seamlessly navigated non-backward-compatible changes across multiple vLLM releases, and accommodated major architectural transitions—including the migration from Helm-based deployments to Kustomize and the substantial refactoring of the llm-d-benchmark CLI.
+
+Notably, these significant stack changes required only minimal updates to the skills themselves. As discussed earlier, the skills are intentionally lightweight: rather than reimplementing existing functionality, they compose and orchestrate the project's native deployment tools, benchmarking framework, and documentation. This design minimizes maintenance effort while allowing the automation layer to evolve alongside the underlying llm-d ecosystem with very little friction.
+
+
+TBD: add other evidence for the value of skills
 
 
 # The Role of the Human-In-The-Loop
 
-TBD: e.g., detect common code assistant errors/pitfalls and capture in skills, review results and refine benchmarking/configuration tasks accordingly
+TBD: e.g., detect common code assistant errors/pitfalls and capture in skills, review results and refine benchmarking/configuration tasks accordingly. Many of the skills were created following benchmarking activities and gaps detected in existing skills (reset of kv cache, create an llm-d-ready GKE cluster).
 
 
 # Observations, Limitations and Lessons Learned
