@@ -54,7 +54,7 @@ The complete collection of available skills is maintained in the [llm-d Skills r
 
 # How llm-d skills help achieve accelerated configuration and evaluation 
 
-## Comprehensive llm-d benchmarking at scale
+## Diverse llm-d benchmarking at scale
 
 Over the course of three months, from May through July 2026, llm-d Skills powered a large-scale benchmarking campaign with minimal human intervention. During this period, we executed approximately 170 two-way and three-way comparison experiments, comprising more than 350 individual benchmark runs across different models, hardware, and software stack configurations.
 
