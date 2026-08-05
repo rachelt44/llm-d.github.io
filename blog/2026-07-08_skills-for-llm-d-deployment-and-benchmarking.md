@@ -49,10 +49,12 @@ Developer-supporting skills include:
     - kv-cache-pressure-load-designer (work in progress): Generates benchmark workload configurations that exercise specific request concurrency, stage, and count characteristics that reach the state where active requests collectively need more KV memory than the GPU has​.
 
 
-The complete collection of available skills is maintained in the llm-d Skills repository: https://github.com/llm-d-incubation/llm-d-skills.    
+The complete collection of available skills is maintained in the [llm-d Skills repository](https://github.com/llm-d-incubation/llm-d-skills).    
 
 
 # How llm-d skills help achieve accelerated configuration and evaluation 
+
+## Comprehensive llm-d benchmarking at scale
 
 Over the course of three months, from May through July 2026, llm-d Skills powered a large-scale benchmarking campaign with minimal human intervention. During this period, we executed approximately 170 two-way and three-way comparison experiments, comprising more than 350 individual benchmark runs across different models, hardware, and software stack configurations.
 
