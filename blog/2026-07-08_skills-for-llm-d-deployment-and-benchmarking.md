@@ -74,11 +74,32 @@ In our experience, autoconfig has significantly reduced the time it takes to spi
 
 # The Role of the Human-In-The-Loop
 
-While the skills automate much of the deployment and benchmarking workflow, the human remains an essential part of the evaluation loop. The skills are designed around explicit checkpoints rather than unattended automation. In the autoconfig workflow, for example, the assistant presents a full recap of every input for confirmation before rendering anything, and each deployment step is approved individually. The assistant executes, but the human decides. Meaningful performance evaluation likewise requires more than simply collecting metrics - it requires interpreting the results to determine whether an experiment actually exercised the feature under investigation and whether the observed behavior supports valid conclusions. When experiments fail to provide meaningful insights, practitioners refine the deployment configuration, workload characteristics, or evaluation methodology and repeat the process. This iterative feedback loop also drives the evolution of the skills themselves. Common pitfalls encountered during benchmarking, recurring code assistant mistakes, and repetitive manual tasks are continuously distilled into new or improved skills. For example, capabilities such as provisioning an llm-d-ready GKE cluster and clearing KV cache state between benchmark runs were introduced after they were repeatedly identified as missing pieces during real benchmarking campaigns. As a result, the skills become progressively more capable over time, capturing operational knowledge and allowing future evaluations to benefit from the experience accumulated in previous ones.
+While the skills automate much of the deployment and benchmarking workflow, the human remains an essential part of the evaluation loop. The skills are designed around explicit checkpoints rather than unattended automation. In the autoconfig workflow, for example, the assistant presents a full recap of every input for confirmation before rendering anything, and each deployment step is approved individually. The assistant executes, but the human decides. Meaningful performance evaluation likewise requires more than simply collecting metrics - it requires interpreting the results to determine whether an experiment actually exercised the feature under investigation and whether the observed behavior supports valid conclusions. When experiments fail to provide meaningful insights, practitioners refine the deployment configuration, workload characteristics, or evaluation methodology and repeat the process. This iterative feedback loop also drives the evolution of the skills themselves. Common pitfalls encountered during benchmarking, recurring code assistant mistakes, and repetitive manual tasks are continuously distilled into new or improved skills. For example, we introduced capabilities such as provisioning an llm-d-ready GKE cluster and clearing KV cache state between benchmark runs after they were repeatedly identified as missing pieces during real benchmarking campaigns. As a result, the skills become progressively more capable over time, capturing operational knowledge and allowing future evaluations to benefit from the experience accumulated in previous ones.
 
 # Observations, Limitations and Lessons Learned
 
-TBD
+Building and maintaining reusable skills taught us that success depends not only on the quality of the implementation, but also on how knowledge is captured, maintained, and presented. Throughout our experience developing and working with skills, several recurring patterns and challenges emerged.
+
+## Finding the Right Level of Abstraction
+
+One of the most important design decisions is choosing the appropriate level of abstraction. Skills that are too detailed tend to become outdated quickly and consume unnecessary context, making them expensive to use. On the other hand, skills that are too generic provide insufficient guidance, forcing the code assistant to rely on trial and error. The most effective skills strike a balance: they capture the essential workflow and decision points without prescribing every implementation detail.
+
+## Skills Require Continuous Maintenance
+
+Skills should be treated like any other software artifact, and evolve alongside the systems they describe. As projects change, assumptions become outdated and best practices shift. Without regular maintenance, skills gradually lose their effectiveness.
+
+We found that periodically refreshing skills with the help of skill-generation tools works well. In this workflow, a human specifies the desired changes and reviews the generated updates, ensuring that the skill remains both accurate and aligned with current development practices.
+
+## Explicit Guidance Matters
+
+Not all best practices are equally easy for a code assistant to infer. Some behaviors that seem obvious to experienced developers can be surprisingly difficult for an assistant to identify consistently.
+
+For example, we observed that the assistant occasionally struggled to determine when KV cache eviction was required. In some cases, it failed to evict the cache after a failed benchmark start, while in others it performed an unnecessary eviction after deploying a new stack. These scenario-specific operational rules should be documented as explicitly as possible. When appropriate, they should also be stored as persistent memory or reusable guidance to ensure consistent behavior across tasks.
+
+## Key Takeaway
+
+The quality of a skill depends not only on its content but also on its longevity and clarity. Well-designed skills balance abstraction with specificity, evolve alongside the codebase, and make critical operational knowledge explicit rather than relying on implicit assumptions. Following these principles results in more reliable, efficient, and maintainable interactions with code assistants.
+
 
 # Try the skills yourself
 
