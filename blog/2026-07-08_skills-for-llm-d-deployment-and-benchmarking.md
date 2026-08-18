@@ -27,7 +27,7 @@ The challenge extends well beyond configuration alone. Modern inference serving 
 
 # llm-d skills for reliable and accelerated configuration and evaluation
 
-To address these challenges, we leverage code assistant skills to automate llm-d configuration and evaluation. Rather than relying on rigid automation scripts, we use skills as the primary abstraction for orchestrating existing llm-d tooling, code, and documentation. This allows the evaluation workflow to remain both structured and adaptable as the serving stack evolves.
+To address these challenges, we leverage code assistant skills to automate llm-d configuration and evaluation. Rather than relying on rigid automation scripts, we use skills as the primary abstraction for orchestrating existing llm-d tooling, code, and documentation. This allows the evaluation workflow to remain both structured and adaptable as the serving stack evolves. Considering that code assistants are themselves evolving into “super harnesses” capable of orchestrating increasingly sophisticated benchmarking and evaluation workflows, these skills can serve as modular building blocks that super harnesses can compose and invoke as needed.
 
 We provide a collection of reusable skills that automate common operational tasks and support different stages of the llm-d lifecycle. These skills can be broadly divided into those intended for users deploying and evaluating llm-d, and those intended for developers extending or optimizing the serving stack.
 
