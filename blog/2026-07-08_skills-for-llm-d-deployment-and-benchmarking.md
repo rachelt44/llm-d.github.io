@@ -105,6 +105,6 @@ The quality of a skill depends not only on its content but also on its longevity
 
 # Try the skills yourself
 
-All of the skills described in this post are available in the [llm-d Skills repository](https://github.com/llm-d-incubation/llm-d-skills). They follow the agentskills.io format, so they work with any code assistant that loads SKILL.md-based skills, including Gemini CLI and Claude Code. Simply copy a skill folder into the respective skills directory, describe your task (e.g. "Help me configure llm-d for my workload."), and the skill should walk you through the rest.
+All of the skills described in this post are available in the [llm-d Skills repository](https://github.com/llm-d-incubation/llm-d-skills). They follow the agentskills.io format, so they work with any code assistant that loads SKILL.md-based skills, including Gemini CLI and Claude Code. Simply copy a skill folder into the respective skills directory, describe your task (e.g. "Help me configure llm-d for my workload."), and the skill should walk you through the rest. You can also automatically install the skills or a subset of them via Claude Code plugin marketplace. See the [Installation Section](https://github.com/llm-d-incubation/llm-d-skills#installation) for more details. 
 
 Each skill's README documents its current capabilities, prerequisites, and scope. If you find a gap, we would love to hear about it: issues and contributions to the skills repo are welcome, and as described above, real-world pain points are exactly what drive the next round of skills.
