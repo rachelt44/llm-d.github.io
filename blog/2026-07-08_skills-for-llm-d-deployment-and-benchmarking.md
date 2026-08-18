@@ -33,21 +33,25 @@ We provide a collection of reusable skills that automate common operational task
 
 User-supporting skills include:
 
-    - deploy-llm-d: Deploys an llm-d stack on an existing Kubernetes or OpenShift cluster using the Well-Lit Path guides and deployment variants.
-    - teardown-llm-d: Removes an llm-d deployment and cleans up the associated Helm/Kustomize resources.
-    - create-gke-infra-llm-d: Provisions a Google Kubernetes Engine cluster with the GPU networking, node pools, and Gateway API prerequisites required for llm-d.
-    - configure-wva-autoscaling-llm-d: Configures the Workload Variant Autoscaler (WVA) and generates reusable deployment scripts.
-    - llm-d-autoconfig: Collects workload requirements and SLA constraints to generate deployment recommendations and, optionally, deploy and benchmark the recommended configuration.
+  - [deploy-llm-d](https://github.com/llm-d-incubation/llm-d-skills/tree/main/skills/deploy-llm-d): Deploys an llm-d stack on an existing Kubernetes or OpenShift cluster using the Well-Lit Path guides and deployment variants.
+  - [teardown-llm-d](https://github.com/llm-d-incubation/llm-d-skills/tree/main/skills/teardown-llm-d): Removes an llm-d deployment and cleans up the associated Helm/Kustomize resources.
+  - [create-gke-infra-llm-d](https://github.com/llm-d-incubation/llm-d-skills/tree/main/skills/create-gke-infra-llm-d): Provisions a Google Kubernetes Engine cluster with the GPU networking, node pools, and Gateway API prerequisites required for llm-d.
+  - [configure-wva-autoscaling-llm-d](https://github.com/llm-d-incubation/llm-d-skills/tree/main/skills/configure-wva-autoscaling-llm-d): Configures the Workload Variant Autoscaler (WVA) and generates reusable deployment scripts.
+  - [llm-d-autoconfig](https://github.com/llm-d-incubation/llm-d-skills/tree/main/autoconfig): Collects workload requirements and SLA constraints to generate deployment recommendations and, optionally, deploy and benchmark the recommended configuration.
 
 Developer-supporting skills include:
 
-    - run-llm-d-benchmark: Executes benchmark workloads against a deployed llm-d stack to collect performance metrics.
-    - compare-llm-d-configurations: Automates A/B evaluation by deploying, benchmarking, tearing down, and comparing multiple llm-d configurations.
-    - clear-kv-cache-tiers-in-llm-d-deployment: Clears KV cache state across GPU, CPU, and filesystem offload tiers without disrupting API availability, enabling repeatable experiments.
-    - kv-cache-pressure-load-designer (work in progress): Generates benchmark workload configurations that exercise specific request concurrency, stage, and count characteristics that reach the state where active requests collectively need more KV memory than the GPU has​.
+  - [run-llm-d-benchmark](https://github.com/llm-d-incubation/llm-d-skills/tree/main/skills/run-llm-d-benchmark): Executes benchmark workloads against a deployed llm-d stack to collect performance metrics.
+  - [compare-llm-d-configurations](https://github.com/llm-d-incubation/llm-d-skills/tree/main/skills/compare-llm-d-configurations): Automates A/B evaluation by deploying, benchmarking, tearing down, and comparing multiple llm-d configurations.
+  - [clear-kv-cache-tiers-in-llm-d-deployment](https://github.com/llm-d-incubation/llm-d-skills/tree/main/skills/clear-kv-cache-tiers-in-llm-d-deployment): Clears KV cache state across GPU, CPU, and filesystem offload tiers without disrupting API availability, enabling repeatable experiments.
+  - [kv-cache-pressure-load-designer](https://github.com/rachelt44/llm-d-skills/tree/add-kv-offload-load-designer/skills/kv-cache-pressure-load-designer) (work in progress): Generates benchmark workload configurations that exercise specific request concurrency, stage, and count characteristics that reach the state where active requests collectively need more KV memory than the GPU has​.
 
 
 The complete collection of available skills is maintained in the [llm-d Skills repository](https://github.com/llm-d-incubation/llm-d-skills).    
+
+Both categories of skill are thin orchestration layers over the same underlying resources — llm-d's own guides, its benchmark tooling, and the live cluster — rather than a separate, hand-maintained source of truth. What differs is *how* each category uses them: single-purpose skills follow a guide you've already chosen, while llm-d-autoconfig uses the same guides to help decide which configuration to follow in the first place.
+
+![Single-purpose skills execute an already-decided configuration, tracing through the guides and benchmark tooling to the cluster; llm-d-autoconfig sits upstream of that decision, probing the cluster and citing the same guides live before rendering a config for the cluster.](/img/blog-assets/skills-resource-flow.jpg)
 
 
 # How llm-d skills help achieve accelerated configuration and evaluation 
@@ -56,7 +60,7 @@ The complete collection of available skills is maintained in the [llm-d Skills r
 
 Over the course of three months, from May through July 2026, llm-d Skills powered a large-scale benchmarking campaign with minimal human intervention. During this period, we executed approximately 170 two-way and three-way comparison experiments, comprising more than 350 individual benchmark runs across different models, hardware, and software stack configurations.
 
-The evaluation covered a broad spectrum of llm-d capabilities, including routing scorer heuristics, precise prefix cache-aware routing, multi-tier KV cache offloading with different eviction policies, and prefill/decode disaggregation using both vLLM and SGLang. The experiments also exercised a wide variety of workloads, ranging from synthetic benchmarks to traces from the inference-perf workload catalog, as well as agentic trace replay.
+The evaluation covered a broad spectrum of llm-d capabilities, including routing scorer heuristics, precise prefix cache-aware routing, multi-tier KV cache offloading with different eviction policies, and prefill/decode disaggregation using both vLLM and SGLang. The experiments also exercised a wide variety of workloads, ranging from synthetic benchmarks to traces from the [inference-perf workload catalog](https://github.com/kubernetes-sigs/inference-perf/tree/main/workload-catalog), as well as agentic trace replay.
 
 Beyond automating benchmark execution and enabling efficient exploration of the large configuration space, the skill-empowered code assistants proved remarkably resilient to the rapid evolution of the llm-d ecosystem that occurred during the benchmarking period. They seamlessly navigated non-backward-compatible changes across multiple vLLM releases, and accommodated major architectural transitions—including the migration from Helm-based deployments to Kustomize and the substantial refactoring of the llm-d-benchmark CLI. Crucially, ***this benchmarking campaign would not have been feasible at this scale or pace without the skills capturing operational knowledge and best practices as they emerged.*** By encoding deployment procedures, troubleshooting guidance, and lessons learned from previous experiments, the skills enabled the automation to continuously adapt to a rapidly evolving software ecosystem while shielding users from much of its underlying complexity. This accumulation of knowledge made it possible to sustain hundreds of benchmark runs despite the constant evolution of the llm-d stack.
 
