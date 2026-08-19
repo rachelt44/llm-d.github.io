@@ -49,9 +49,11 @@ Developer-supporting skills include:
 
 The complete collection of available skills is maintained in the [llm-d Skills repository](https://github.com/llm-d-incubation/llm-d-skills).    
 
-Both categories of skill are thin orchestration layers over the same underlying resources — llm-d's own guides, its benchmark tooling, and the live cluster — rather than a separate, hand-maintained source of truth. What differs is *how* each category uses them: single-purpose skills follow a guide you've already chosen, while llm-d-autoconfig uses the same guides to help decide which configuration to follow in the first place.
+<!-- Both categories of skill are thin orchestration layers over the same underlying resources — llm-d's own guides and its benchmark tooling — rather than a separate, hand-maintained source of truth. What differs is *how* each category uses them: single-purpose skills follow a guide you've already chosen, while llm-d-autoconfig uses the same guides to help decide which configuration to follow in the first place. Either way, each skill runs against whichever cluster you point it at, and you can run any subset of the skills on your own cluster independently.
 
-![Single-purpose skills execute an already-decided configuration, tracing through the guides and benchmark tooling to the cluster; llm-d-autoconfig sits upstream of that decision, probing the cluster and citing the same guides live before rendering a config for the cluster.](/img/blog-assets/skills-resource-flow.jpg)
+![Single-purpose skills don't decide anything: they follow the guide you already picked and invoke its matching scripts, drawing on the llm-d guides and benchmark tooling every time, falling back to a troubleshooting KB when a step fails, and applying the result to your cluster.](/img/blog-assets/skills-single-purpose-flow.jpg)
+
+![llm-d-autoconfig sits upstream of a configuration decision instead of executing one. It probes your cluster and works through a discovery questionnaire, then fetches and cites the same llm-d guides live to ground a recommendation before rendering it into a deploy bundle that's applied to your cluster.](/img/blog-assets/skills-autoconfig-flow.jpg)-->
 
 
 # How llm-d skills help achieve accelerated configuration and evaluation 
