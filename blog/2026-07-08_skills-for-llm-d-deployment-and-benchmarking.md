@@ -76,6 +76,34 @@ Autoconfig turns this into a guided workflow, starting with a cluster discovery 
 
 In our experience, autoconfig has significantly reduced the time it takes to spin up and test new llm-d-router features. It also makes it straightforward to create custom deployments and share them as Kubernetes-deployable artifacts. The result is a simple, reproducible deployment record that's easy to replay on other clusters.
 
+### An example flow: from a fresh cluster to a validated deployment
+
+To make this concrete, here is what the flow looks like for someone outside the llm-d project. Imagine a platform engineer with a Kubernetes cluster of 8 NVIDIA H100s who wants to serve Qwen3-32B behind an internal chat assistant, with a p90 time-to-first-token target of 2 seconds. They copy the skill into their code assistant and type: "Help me configure llm-d for my workload."
+
+1. **Cluster discovery.** The assistant scans the cluster with read-only kubectl calls: GPU inventory, installed CRDs, gateway classes, and any existing model servers. What it finds becomes pre-filled defaults for the questions that follow.
+
+<!-- ![The assistant reports the discovered GPU layout, CRDs, and gateway state as a bulleted summary.](/img/blog-assets/autoconfig-example-discovery.png) -->
+
+2. **Discovery questionnaire.** The assistant walks through a structured questionnaire using its native interactive prompts: model, aggregated or prefill/decode disaggregated topology, SLA targets, request shape (prompt and output lengths, how much prompt content is shared between requests), and optional features such as autoscaling. Nothing is silently guessed. If a required answer is missing, it asks.
+
+<!-- ![The questionnaire runs as native interactive prompts in the assistant, with discovered values pre-filled as defaults.](/img/blog-assets/autoconfig-example-questionnaire.png) -->
+
+3. **Doc-grounded recommendation.** The assistant fetches the current llm-d guides and quotes them to justify each choice. In this example, the heavily shared system prompt leads it to recommend precise prefix-cache routing, citing the corresponding guide's values file directly.
+
+4. **Recap and confirmation.** Before anything is rendered, the assistant presents a recap of every input, including a schedulability audit checking that the requested replicas and tensor parallelism actually fit the GPUs found in step 1. Nothing proceeds without explicit sign-off.
+
+<!-- ![The recap lists every confirmed input and the schedulability audit before asking for a go/no-go.](/img/blog-assets/autoconfig-example-recap.png) -->
+
+5. **Rendering.** The deterministic renderer produces the EPP configuration, a matching benchmark definition, and the deployment bundle: a directory of plain Kubernetes YAML files, one per resource, with every parameter tagged by the evidence backing it.
+
+6. **Deploy.** On approval, the assistant applies the bundle step by step, confirming each one, and finishes with a smoke test against the gateway using the exact model name given in the questionnaire.
+
+7. **Benchmark against the SLAs.** Optionally, the assistant applies the generated benchmark Job and compares the measured latency and throughput against the SLA targets from step 2, closing the loop between the requirements the engineer stated and the behavior the cluster actually delivers.
+
+<!-- ![The benchmark results are summarized against the SLA targets from the questionnaire.](/img/blog-assets/autoconfig-example-benchmark.png) -->
+
+The interactive part of this flow takes minutes, and the output is more than a running stack. The bundle directory is a versionable deployment record that a teammate can replay on another cluster with a single kubectl command, with no Helm, no repository clone, and no assistant required at apply time.
+
 
 # The Role of the Human-In-The-Loop
 
