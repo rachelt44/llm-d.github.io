@@ -571,3 +571,11 @@ yangligt2:
   email: yangligt@google.com
   socials:
     github: https://github.com/yangligt2
+
+ashokchandrasekar:
+  name: Ashok Chandrasekar
+  title: Staff Software Engineer, Google
+  image_url: /img/blogs/ashokchandrasekar.webp
+  socials:
+    linkedin: ashokchandrasekar
+    github: https://github.com/achandrasekar
