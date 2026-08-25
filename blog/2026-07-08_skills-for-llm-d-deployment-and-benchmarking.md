@@ -76,33 +76,33 @@ Autoconfig turns this into a guided workflow, starting with a cluster discovery 
 
 In our experience, autoconfig has significantly reduced the time it takes to spin up and test new llm-d-router features. It also makes it straightforward to create custom deployments and share them as Kubernetes-deployable artifacts. The result is a simple, reproducible deployment record that's easy to replay on other clusters.
 
-### An example flow: from a fresh cluster to a validated deployment
+### An example flow: from workload requirements to a validated deployment
 
-To make this concrete, here is what the flow looks like for someone outside the llm-d project. The screenshots below are from a real run: a GKE cluster with a pool of NVIDIA L4 GPUs, serving Qwen3-8B behind an internal chat assistant, with p95 targets of 1 second for time-to-first-token and 100 ms per output token. It starts by copying the skill into a code assistant and typing: "Help me configure llm-d for my workload."
+To make this concrete, here is what the flow looks like: run on a GKE cluster with a pool of NVIDIA L4 GPUs already running vLLM pods serving Qwen3-8B, where autoconfig configures and deploys the routing layer on top. Against p95 targets of 1000ms for time-to-first-token and 100ms per output token.
 
-1. **Cluster discovery.** The assistant scans the cluster with read-only kubectl calls: GPU inventory, installed CRDs, gateway classes, and any existing model servers. What it finds becomes pre-filled defaults for the questions that follow.
+1. **Cluster discovery.** The assistant scans the cluster with kubectl calls: GPUs, installed CRDs, gateway classes, and any existing model servers. The defaults for the questions that follow are based off what it finds.
 
-![The assistant reports the discovered GPU layout, CRDs, and gateway state as a bulleted summary.](/img/blog-assets/autoconfig-example-discovery.png)
+![The assistant reports the discovered GPUs, CRDs, and gateway state as a bulleted summary.](/img/blog-assets/autoconfig-example-discovery.png)
 
-2. **Discovery questionnaire.** The assistant walks through a structured questionnaire using its native interactive prompts: model, aggregated or prefill/decode disaggregated topology, SLA targets, request shape (prompt and output lengths, how much prompt content is shared between requests), and optional features such as autoscaling. Nothing is silently guessed. If a required answer is missing, it asks.
+2. **Discovery questionnaire.** The assistant walks through a questionnaire using its native interactive prompts: model, aggregated or prefill/decode topology, SLA targets, request shape (prompt and output lengths, how much prompt content is shared between requests), and optional features such as autoscaling, latency prediction, etc. Referring to the user if follow up information is needed.
 
-![The questionnaire runs as native interactive prompts in the assistant, with discovered values pre-filled as defaults.](/img/blog-assets/autoconfig-example-questionnaire.png)
+![The questionnaire runs as interactive prompts in the assistant, with discovered values as defaults.](/img/blog-assets/autoconfig-example-questionnaire.png)
 
-3. **Doc-grounded recommendation.** The assistant fetches the current llm-d guides and quotes them to justify each choice. In this run it recommended the optimized-baseline plugin set, quoting the guide's values file directly, and even flagged that one default was calibrated for different hardware and should be re-measured with the guide's calibration recipe.
+3. **Doc-grounded recommendation.** The assistant fetches the current llm-d guides to justify each choice. In this run, it recommended the optimized-baseline plugin set, quoting the guide's values file, and even flagged that one default was calibrated for different hardware and should be re-measured with the guide's calibration recipe.
 
-4. **Recap and confirmation.** Before anything is rendered, the assistant presents a recap of every input, including a schedulability audit checking that the requested replicas and tensor parallelism actually fit the GPUs found in step 1. Nothing proceeds without explicit sign-off.
+4. **Recap and confirmation.** Before anything is rendered, the assistant presents a recap, including an audit checking that the requested replicas and tensor parallelism actually fit the GPUs found in step 1.
 
-![The recap lists every confirmed input and the schedulability audit before asking for a go/no-go.](/img/blog-assets/autoconfig-example-recap.png)
+![The recap lists the confirmed input and the schedulability audit before asking for a go/no-go.](/img/blog-assets/autoconfig-example-recap.png)
 
-5. **Rendering.** The deterministic renderer produces the EPP configuration, a matching benchmark definition, and the deployment bundle: a directory of plain Kubernetes YAML files, one per resource, with every parameter tagged by the evidence backing it.
+5. **Rendering.** The deterministic renderer produces the EPP configuration, a benchmark definition, and the deployment bundle: a directory of Kubernetes YAML files, one per resource, with every parameter tagged with the evidence backing it.
 
-6. **Deploy.** On approval, the assistant applies the bundle step by step, confirming each one, and finishes with a smoke test against the gateway using the exact model name given in the questionnaire.
+6. **Deploy.** On approval, the assistant applies the bundle a step at a time with confirmations, and finishes with a smoke test against the gateway using the model name from the questionnaire.
 
-7. **Benchmark against the SLAs.** Optionally, the assistant applies the generated benchmark Job and compares the measured latency and throughput against the SLA targets from step 2, closing the loop between the requirements the engineer stated and the behavior the cluster actually delivers.
+7. **Benchmark against the SLAs.** Optionally, the assistant applies the generated benchmark job and compares the latency and throughput against the SLA targets from step 2, verifying the desired behavior.
 
 ![The benchmark results are summarized against the SLA targets from the questionnaire.](/img/blog-assets/autoconfig-example-benchmark.png)
 
-The interactive part of this flow takes minutes, and the output is more than a running stack. The bundle directory is a versionable deployment record that a teammate can replay on another cluster with a single kubectl command, with no Helm, no repository clone, and no assistant required at apply time.
+The interactive part of this flow only takes a few minutes, with the only real time sinks being waiting for the gateway to configure or waiting for the benchmark to run. The bundle directory is a versionable deployment record that others can replay with a single kubectl command. No Helm or repository clone required.
 
 
 # The Role of the Human-In-The-Loop
