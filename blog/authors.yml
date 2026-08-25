@@ -562,3 +562,12 @@ alexnails:
   socials:
     linkedin: alex-nails
     github: https://github.com/alexnails
+
+yangligt2:
+  name: Yang Li
+  title: Software Engineer, Google
+  url: https://github.com/yangligt2
+  image_url: https://avatars.githubusercontent.com/u/210760644?v=4
+  email: yangligt@google.com
+  socials:
+    github: https://github.com/yangligt2
